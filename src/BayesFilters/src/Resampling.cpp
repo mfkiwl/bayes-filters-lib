@@ -14,22 +14,23 @@ using namespace Eigen;
 
 
 Resampling::Resampling(unsigned int seed) noexcept :
-    generator_(std::mt19937_64(seed)) { }
+    generator_(std::mt19937_64(seed))
+{ }
 
 
 Resampling::Resampling() noexcept :
-    Resampling(1) { }
-
-
-Resampling::~Resampling() noexcept { }
+    Resampling(1)
+{ }
 
 
 Resampling::Resampling(const Resampling& resampling) noexcept :
-    generator_(resampling.generator_) { }
+    generator_(resampling.generator_)
+{ }
 
 
 Resampling::Resampling(Resampling&& resampling) noexcept :
-    generator_(std::move(resampling.generator_)) { }
+    generator_(std::move(resampling.generator_))
+{ }
 
 
 Resampling& Resampling::operator=(const Resampling& resampling)
@@ -43,6 +44,9 @@ Resampling& Resampling::operator=(const Resampling& resampling)
 
 Resampling& Resampling::operator=(Resampling&& resampling) noexcept
 {
+    if (this == &resampling)
+        return *this;
+
     generator_ = std::move(resampling.generator_);
 
     return *this;
@@ -51,6 +55,9 @@ Resampling& Resampling::operator=(Resampling&& resampling) noexcept
 
 Resampling& Resampling::operator=(const Resampling&& resampling) noexcept
 {
+    if (this == &resampling)
+        return *this;
+
     generator_ = std::move(resampling.generator_);
 
     return *this;
@@ -81,7 +88,7 @@ void Resampling::resample(const ParticleSet& cor_particles, ParticleSet& res_par
         res_particles.state(j) = cor_particles.state(idx_csw);
         res_particles.mean(j) = cor_particles.mean(idx_csw);
         res_particles.covariance(j) = cor_particles.covariance(idx_csw);
-        res_particles.weight(j) = -log(num_particles);
+        res_particles.weight(j) = -std::log(num_particles);
         res_parents(j) = idx_csw;
     }
 }

@@ -21,21 +21,25 @@ namespace bfl {
 class bfl::WhiteNoiseAcceleration : public LinearStateModel
 {
 public:
-    WhiteNoiseAcceleration(double T, double tilde_q, unsigned int seed) noexcept;
+    WhiteNoiseAcceleration() noexcept;
 
     WhiteNoiseAcceleration(double T, double tilde_q) noexcept;
 
-    WhiteNoiseAcceleration() noexcept;
+    WhiteNoiseAcceleration(double T, double tilde_q, unsigned int seed) noexcept;
 
-    WhiteNoiseAcceleration(const WhiteNoiseAcceleration& wna);
+    WhiteNoiseAcceleration(const WhiteNoiseAcceleration& state_model) noexcept = delete;
 
-    WhiteNoiseAcceleration(WhiteNoiseAcceleration&& wna) noexcept;
+    WhiteNoiseAcceleration& operator=(const WhiteNoiseAcceleration& state_model) noexcept = delete;
 
-    virtual ~WhiteNoiseAcceleration() noexcept;
+    WhiteNoiseAcceleration(WhiteNoiseAcceleration&& state_model) noexcept;
 
-    WhiteNoiseAcceleration& operator=(const WhiteNoiseAcceleration& wna);
+    WhiteNoiseAcceleration& operator=(WhiteNoiseAcceleration&& state_model) noexcept;
 
-    WhiteNoiseAcceleration& operator=(WhiteNoiseAcceleration&& wna) noexcept;
+    virtual ~WhiteNoiseAcceleration() noexcept = default;
+
+    bool setProperty(const std::string& property) override;
+
+    std::pair<std::size_t, std::size_t> getOutputSize() const override;
 
     Eigen::MatrixXd getNoiseSample(const std::size_t num) override;
 
@@ -45,14 +49,12 @@ public:
 
     Eigen::VectorXd getTransitionProbability(const Eigen::Ref<const Eigen::MatrixXd>& prev_states, const Eigen::Ref<const Eigen::MatrixXd>& cur_states) override;
 
-    bool setProperty(const std::string& property) override { return false; };
-
-    std::pair<std::size_t, std::size_t> getOutputSize() const override;
 
 private:
     std::mt19937_64 generator_;
 
     std::normal_distribution<double> distribution_;
+
 
 protected:
     /**

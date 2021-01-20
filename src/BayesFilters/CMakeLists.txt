@@ -24,8 +24,10 @@ set(${LIBRARY_TARGET_NAME}_FF_HDR
         include/BayesFilters/BootstrapCorrection.h
         include/BayesFilters/DrawParticles.h
         include/BayesFilters/ExogenousModel.h
+        include/BayesFilters/ExogenousProcess.h
         include/BayesFilters/GaussianCorrection.h
         include/BayesFilters/GaussianLikelihood.h
+        include/BayesFilters/GaussianMixturePrediction.h
         include/BayesFilters/GaussianInitialization.h
         include/BayesFilters/GaussianPrediction.h
         include/BayesFilters/GPFCorrection.h
@@ -40,20 +42,18 @@ set(${LIBRARY_TARGET_NAME}_FF_HDR
         include/BayesFilters/LTIMeasurementModel.h
         include/BayesFilters/LTIStateModel.h
         include/BayesFilters/MeasurementModel.h
-        include/BayesFilters/MeasurementModelDecorator.h
         include/BayesFilters/ParticleSetInitialization.h
         include/BayesFilters/PFCorrection.h
-        include/BayesFilters/PFCorrectionDecorator.h
         include/BayesFilters/PFPrediction.h
-        include/BayesFilters/PFPredictionDecorator.h
         include/BayesFilters/Resampling.h
         include/BayesFilters/ResamplingWithPrior.h
         include/BayesFilters/SimulatedLinearSensor.h
         include/BayesFilters/SimulatedStateModel.h
+        include/BayesFilters/Skippable.h
         include/BayesFilters/StateModel.h
-        include/BayesFilters/StateModelDecorator.h
+        include/BayesFilters/StateProcess.h
         include/BayesFilters/SUKFCorrection.h
-        include/BayesFilters/TimeDecreasingDynamics.h
+        # include/BayesFilters/TimeDecreasingDynamics.h
         include/BayesFilters/UKFCorrection.h
         include/BayesFilters/UKFPrediction.h
         include/BayesFilters/WhiteNoiseAcceleration.h
@@ -88,11 +88,11 @@ set(${LIBRARY_TARGET_NAME}_FA_SRC
 )
 
 set(${LIBRARY_TARGET_NAME}_FF_SRC
-        src/AdditiveMeasurementModel.cpp
         src/AdditiveStateModel.cpp
         src/Agent.cpp
         src/BootstrapCorrection.cpp
         src/DrawParticles.cpp
+        src/ExogenousModel.cpp
         src/GaussianCorrection.cpp
         src/GaussianLikelihood.cpp
         src/GaussianPrediction.cpp
@@ -107,19 +107,15 @@ set(${LIBRARY_TARGET_NAME}_FF_SRC
         src/LTIMeasurementModel.cpp
         src/LTIStateModel.cpp
         src/MeasurementModel.cpp
-        src/MeasurementModelDecorator.cpp
         src/PFCorrection.cpp
-        src/PFCorrectionDecorator.cpp
         src/PFPrediction.cpp
-        src/PFPredictionDecorator.cpp
         src/Resampling.cpp
         src/ResamplingWithPrior.cpp
         src/SimulatedLinearSensor.cpp
         src/SimulatedStateModel.cpp
         src/StateModel.cpp
-        src/StateModelDecorator.cpp
         src/SUKFCorrection.cpp
-        src/TimeDecreasingDynamics.cpp
+        # src/TimeDecreasingDynamics.cpp
         src/UKFCorrection.cpp
         src/UKFPrediction.cpp
         src/WhiteNoiseAcceleration.cpp
@@ -134,7 +130,6 @@ set(${LIBRARY_TARGET_NAME}_FU_SRC
         src/Logger.cpp
         src/ParticleSet.cpp
         src/sigma_point.cpp
-        src/utils.cpp
 )
 
 set(${LIBRARY_TARGET_NAME}_SRC

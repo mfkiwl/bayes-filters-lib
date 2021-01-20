@@ -13,6 +13,7 @@
 #include <BayesFilters/StateModel.h>
 
 #include <Eigen/Dense>
+
 #include <memory>
 #include <string>
 
@@ -24,7 +25,7 @@ namespace bfl {
 class bfl::PFPrediction
 {
 public:
-    virtual ~PFPrediction() noexcept { };
+    virtual ~PFPrediction() noexcept = default;
 
     void predict(const ParticleSet& prev_particles, ParticleSet& pred_particles);
 
@@ -32,31 +33,25 @@ public:
 
     bool getSkipState();
 
-    bool getSkipExogenous();
+    virtual StateModel& getStateModel() noexcept = 0;
 
-    virtual void setStateModel(std::unique_ptr<StateModel> state_model) = 0;
-
-    virtual void setExogenousModel(std::unique_ptr<ExogenousModel> exogenous_model);
-
-    virtual StateModel& getStateModel() = 0;
-
-    virtual ExogenousModel& getExogenousModel();
 
 protected:
-    PFPrediction() noexcept;
+    PFPrediction() noexcept = default;
 
-    PFPrediction(PFPrediction&& pf_prediction) noexcept;
+    PFPrediction(const PFPrediction& prediction) noexcept = delete;
+
+    PFPrediction& operator=(const PFPrediction& prediction) noexcept = delete;
+
+    PFPrediction(PFPrediction&& prediction) noexcept = default;
+
+    PFPrediction& operator=(PFPrediction&& prediction) noexcept = default;
 
     virtual void predictStep(const ParticleSet& prev_particles, ParticleSet& pred_particles) = 0;
 
+
 private:
-    bool skip_prediction_ = false;
-
-    bool skip_state_ = false;
-
-    bool skip_exogenous_ = false;
-
-    friend class PFPredictionDecorator;
+    bool skip_ = false;
 };
 
 #endif /* PFPREDICTION_H */

@@ -14,23 +14,9 @@ using namespace bfl;
 using namespace Eigen;
 
 
-PFPrediction::PFPrediction() noexcept { };
-
-
-PFPrediction::PFPrediction(PFPrediction&& pf_prediction) noexcept :
-    skip_prediction_(pf_prediction.skip_prediction_),
-    skip_state_(pf_prediction.skip_state_),
-    skip_exogenous_(pf_prediction.skip_exogenous_)
-{
-    pf_prediction.skip_prediction_ = false;
-    pf_prediction.skip_state_      = false;
-    pf_prediction.skip_exogenous_  = false;
-}
-
-
 void PFPrediction::predict(const ParticleSet& prev_particles, ParticleSet& pred_particles)
 {
-    if (!skip_prediction_)
+    if (!skip_)
         predictStep(prev_particles, pred_particles);
     else
         pred_particles = prev_particles;
@@ -40,11 +26,25 @@ void PFPrediction::predict(const ParticleSet& prev_particles, ParticleSet& pred_
 bool PFPrediction::skip(const std::string& what_step, const bool status)
 {
     if (what_step == "prediction")
-        skip_prediction_ = status;
+    {
+        skip_ = status;
+
+        getStateModel().skip("state", status);
+
+        getStateModel().skip("exogenous", status);
+    }
     else if (what_step == "state")
-        skip_state_ = status;
+    {
+        getStateModel().skip("state", status);
+
+        skip_ = getStateModel().getSkipState() & getStateModel().exogenous_model().getSkipState();
+    }
     else if (what_step == "exogenous")
-        skip_exogenous_ = status;
+    {
+        getStateModel().skip("exogenous", status);
+
+        skip_ = getStateModel().getSkipState() & getStateModel().exogenous_model().getSkipState();
+    }
     else
         return false;
 
@@ -54,24 +54,5 @@ bool PFPrediction::skip(const std::string& what_step, const bool status)
 
 bool PFPrediction::getSkipState()
 {
-    return skip_state_;
-}
-
-
-bool PFPrediction::getSkipExogenous()
-{
-    return skip_exogenous_;
-}
-
-
-ExogenousModel& PFPrediction::getExogenousModel()
-{
-    throw std::runtime_error("ERROR::PFPREDICTION::GETEXOGENOUSMODEL\nERROR:\n\tCall to unimplemented base class method.");
-}
-
-
-void PFPrediction::setExogenousModel(std::unique_ptr<ExogenousModel> exogenous_model)
-{
-    std::cerr << "ERROR::PFPREDICTION::SETEXOGENOUSMODEL\n";
-    std::cerr << "ERROR:\n\tCall to unimplemented base class method." << std::endl;
+    return skip_;
 }

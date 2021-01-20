@@ -4,6 +4,12 @@
 ##### `CMake`
 - Minor version increases since API compatibility is broken.
 
+##### `Bugfix`
+- Fixed missing self-assignment check in move assignment operators.
+
+##### `General improvements`
+- Changed any::any default pointer value to nullptr.
+
 ##### `Filtering utilities`
 - Constructor EstimatesExtraction::EstimatesExtraction() takes the state size, both linear and circular.
 - Class EstimatesExtraction does not assume that the state is a 7-vector containing cartesian position and axis/angle representation of orientation anymore.
@@ -30,6 +36,7 @@
 - Added method `bfl::utils::sum_quaternion_rotation_vector()` that evaluates the colwise sum between a unitary quaternion and a set of rotation vectors. The i-th sum is obtained as the quaternion product between the exponential of the i-th rotation vector and the quaternion.
 - Added method `bfl::utils::diff_quaternion()` that evaluates the colwise difference between a set of quaternions and a given unitary quaternion (right operand). The i-th difference is obtained as the logarithm of the quaternion product between the i-th quaternion and the conjugated right operand, i.e it is a rotation vector.
 - Added method `bfl::utils::mean_quaternion()` that evaluates the weighted mean of a set of unitary quaternions.
+- utils.h is now a template header-only utility file.
 
 ##### `Filtering functions`
 - Added pure public virtual method GaussianPrediction::getStateModel() (required to properly implement GPFPrediction::getStateModel()).
@@ -53,10 +60,20 @@
 - `GPFPrediction::correctStep()` calls `correct()` instead of `correctStep()` on the underlying `GaussianCorrection`.
 - `GaussianPrediction` is not a friend of `GPFPrediction` anymore.
 - `GaussianCorrection` is not a friend of `GPFCorrection` anymore.
+- Removed decorator classes. Using decorator was an easy way of extending functionalities, but at the cost of writing erroneous behavior in the filters.
+- Removed friendships from `*Prediction` and `*Correction` classes.
+- Implemented `freeze_measurments` for `*Correction` classes.
+- Made `skip`-related variable value in `*Prediction` classes coherent with assigned values.
+- Removed setters from `*Prediction` and derived classes. All the required data to create an object are passed to the constructor.
+- Removed setters from `*Correction` and derived classes. All the required data to create an object are passed to the constructor.
+- Add `Skippable` interface class to model a functionality that can be skipped on command.
+- Add `StateProcess` interface class to describe state model functionalities.
+- Add `ExogenousProcess` interface class to describe exogenous model functionalities.
+- Add `GaussianMixturePrediction` interface class to describe Gaussian mixture-based prediction functionalities.
+- Move `ExogenousModel` inside `StateModel`. Consequently, the prediction classes only need to handle a `StateModel` that in turns will handle the `ExogenousModel` properly, if present.
 
 ##### `Filtering algorithms`
 - `SIS::filteringStep()` performs measurements freeze before performing the actual correction. The correction is skipped if the freeze fails. The user might want to re-implement this method (or provide their own algorithm) if they need to handle the measurements freeze differently.
-
 
 ##### `Test`
 - Mean extraction is performed using EstimatesExtraction utilities in test_UPF.
@@ -66,6 +83,7 @@
 - Add `test_Gaussian_Density_UVR` testing the method `utils::multivariate_gaussian_density_UVR()`.
 - Change `test_Gaussian` in order to test resizing, noise augmentation and support for quaternions.
 - Update `test_KF`, `test_UKF`, `test_mixed_KF_UKF`, `test_mixed_UKF_KF`, `test_mixed_KF_SUKF` to account for the removed measurements freeze within `GaussianCorrection::correct()`.
+- Add `test_QuaternionUtils` testing quaterion utilities in the `utils` namespace
 
 ## 🔖 Version 0.8.101
 ##### `Bugfix`
@@ -74,7 +92,7 @@
 ##### `CMake`
  - Add CMake variable TEST_LOG_TO_FILE to disable file logs in tests.
 
-##### `General fixes`
+##### `General improvements`
  - Added missing `override` keyword.
  - Reordered data member initialization list of SIS class.
 

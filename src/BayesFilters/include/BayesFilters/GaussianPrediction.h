@@ -9,7 +9,8 @@
 #define GAUSSIANPREDICTION_H
 
 #include <BayesFilters/ExogenousModel.h>
-#include <BayesFilters/GaussianMixture.h>
+#include <BayesFilters/GaussianMixturePrediction.h>
+#include <BayesFilters/Skippable.h>
 #include <BayesFilters/StateModel.h>
 
 #include <Eigen/Dense>
@@ -19,36 +20,36 @@ namespace bfl {
 }
 
 
-class bfl::GaussianPrediction
+class bfl::GaussianPrediction : public GaussianMixturePrediction, public Skippable
 {
 public:
-    virtual ~GaussianPrediction() noexcept;
+    virtual ~GaussianPrediction() noexcept = default;
 
-    void predict(const GaussianMixture& prev_state, GaussianMixture& pred_state);
+    void predict(const GaussianMixture& prev_state, GaussianMixture& pred_state) override;
 
-    bool skip(const std::string& what_step, const bool status);
+    bool skip(const std::string& what_step, const bool status) override;
 
-    bool getSkipState();
-
-    bool getSkipExogenous();
+    bool getSkipState() override;
 
     virtual StateModel& getStateModel() noexcept = 0;
 
-    virtual ExogenousModel& getExogenousModel();
 
 protected:
-    GaussianPrediction() noexcept;
+    GaussianPrediction() noexcept = default;
 
-    GaussianPrediction(GaussianPrediction&& g_prediction) noexcept;
+    GaussianPrediction(const GaussianPrediction& prediction) noexcept = delete;
+
+    GaussianPrediction& operator=(const GaussianPrediction& prediction) noexcept = delete;
+
+    GaussianPrediction(GaussianPrediction&& prediction) noexcept = default;
+
+    GaussianPrediction& operator=(GaussianPrediction&& prediction) noexcept = default;
 
     virtual void predictStep(const GaussianMixture& prev_state, GaussianMixture& pred_state) = 0;
 
+
 private:
-    bool skip_prediction_ = false;
-
-    bool skip_state_ = false;
-
-    bool skip_exogenous_ = false;
+    bool skip_ = false;
 };
 
 #endif /* GAUSSIANPREDICTION_H */
